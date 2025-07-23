@@ -22,12 +22,12 @@ def extract_key_details(text):
     skills = []
     experiences = []
     
-    # Extract skills using spaCy NER (customize this)
+   
     for ent in doc.ents:
-        if ent.label_ in ["ORG", "PRODUCT"]:  # Basic example (adjust labels)
+        if ent.label_ in ["ORG", "PRODUCT"]:  
             skills.append(ent.text)
     
-    # Extract experience using regex
+    
     experiences = re.findall(r'\b(\d+\+? years? of .*? experience)\b', text, re.IGNORECASE)
     
     return {
