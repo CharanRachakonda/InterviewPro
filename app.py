@@ -28,14 +28,14 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 HF_API_URL = "https://api-inference.huggingface.co/models/openai/whisper-large-v3-turbo"
 HF_API_TOKEN = os.getenv('HF_API_TOKEN', 'your_hf_token')
-MONGO_URI = os.getenv('MONGO_URI', 'mongodb+srv://Charan123:charan123@mern-auth-cluster.2phzp.mongodb.net/?retryWrites=true&w=majority&appName=MERN-Auth-Cluster')
+MONGO_URI = os.getenv('MONGO_URI', 'your_mongo_uri')
 
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client['interview_app']
 users_collection = db['users']
 interview_sessions_collection = db['interview_sessions']
 
-genai.configure(api_key='AIzaSyCkX7fHSSSqGzP59egqhKpih0f_P6ICjjM')
+genai.configure(api_key='YOUR_GOOGLE_API_KEY')
 evaluation_model = genai.GenerativeModel('gemini-2.0-flash')
 
 def allowed_file(filename):
@@ -193,7 +193,6 @@ def transcribe_audio():
 @app.route('/evaluate-interview', methods=['POST'])
 @login_required
 def evaluate_interview():
-    # Check if session ID exists
     if 'current_session_id' not in session:
         logging.error("Current session ID not found in session")
         return jsonify({"error": "Session not found"}), 400
@@ -227,7 +226,6 @@ Provide your response in VALID JSON format ONLY:
             try:
                 response = model.generate_content(prompt)
                 response_text = response.text.strip()
-                # Log raw response for debugging
                 print(f"Raw response for question {question_index}: {response_text}")
                 response_text = response_text.replace('```json', '').replace('```', '')
                 json_start = response_text.find('{')
@@ -252,7 +250,6 @@ Provide your response in VALID JSON format ONLY:
             })
             total_score += score
             evaluated_count += 1
-            # Store in MongoDB
             interview_sessions_collection.update_one(
                 {"session_id": session['current_session_id']},
                 {"$push": {
@@ -276,7 +273,6 @@ Provide your response in VALID JSON format ONLY:
                 "score": 0,
                 "feedback": "Question not attempted"
             })
-            # Store "not attempted" in MongoDB
             interview_sessions_collection.update_one(
                 {"session_id": session['current_session_id']},
                 {"$push": {
@@ -294,7 +290,6 @@ Provide your response in VALID JSON format ONLY:
             )
             print(f"Updated session {session['current_session_id']} with not attempted for question {question_index}")
     
-    # Calculate and store summary
     try:
         avg_score = round((total_score / evaluated_count) * 10, 1) if evaluated_count > 0 else 0
     except ZeroDivisionError:
@@ -322,27 +317,23 @@ def history():
     sessions = interview_sessions_collection.find({"user_id": session['user_id']}).sort("timestamp", -1)
     return render_template('history.html', sessions=sessions, username=user.get('username'), email=user.get('email'))
 
-# Helper function to clean text of problematic characters
 def clean_text(text):
     """Clean text of control characters and other problematic elements"""
-    # Remove control characters
     text = re.sub(r'[\x00-\x1F\x7F-\x9F]', '', text)
-    # Replace emojis with their text equivalent or remove them
     emoji_pattern = re.compile("["
-                               u"\U0001F600-\U0001F64F"  # emoticons
-                               u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-                               u"\U0001F680-\U0001F6FF"  # transport & map symbols
-                               u"\U0001F700-\U0001F77F"  # alchemical symbols
-                               u"\U0001F780-\U0001F7FF"  # geometric shapes
-                               u"\U0001F800-\U0001F8FF"  # supplemental arrows
-                               u"\U0001F900-\U0001F9FF"  # supplemental symbols
-                               u"\U0001FA00-\U0001FA6F"  # chess symbols
-                               u"\U0001FA70-\U0001FAFF"  # symbols & pictographs extended
-                               u"\U00002702-\U000027B0"  # dingbats
+                               u"\U0001F600-\U0001F64F"  
+                               u"\U0001F300-\U0001F5FF"  
+                               u"\U0001F680-\U0001F6FF"  
+                               u"\U0001F700-\U0001F77F"  
+                               u"\U0001F780-\U0001F7FF"  
+                               u"\U0001F800-\U0001F8FF"  
+                               u"\U0001F900-\U0001F9FF"  
+                               u"\U0001FA00-\U0001FA6F"  
+                               u"\U0001FA70-\U0001FAFF"  
+                               u"\U00002702-\U000027B0"  
                                u"\U000024C2-\U0001F251" 
                                "]+", flags=re.UNICODE)
     text = emoji_pattern.sub(r'', text)
-    # Replace special characters
     replacements = {
         '"': '"',
         '"': '"',
@@ -351,7 +342,7 @@ def clean_text(text):
         '–': '-',
         '—': '-',
         '…': '...',
-        '\n': ' ',  # Replace newlines with spaces to avoid JSON parsing issues
+        '\n': ' ',  
         '\r': '',
         '\t': ' '
     }
@@ -363,11 +354,9 @@ def clean_text(text):
 @login_required
 def generate_job_questions():
     try:
-        # Get form data
         job_title = request.form.get('jobTitle')
         seniority = request.form.get('seniority')
         job_description = request.form.get('jobDescription')
-        # Get number of questions from form, default to 15 for legacy fallback
         num_questions = request.form.get('num_questions', 15)
         try:
             num_questions = int(num_questions)
@@ -378,7 +367,6 @@ def generate_job_questions():
             return render_template('index.html', 
                                 error='Please fill in all fields (Job Title, Seniority, and Job Description)')
 
-        # Strict prompt for Gemini to return ONLY JSON
         prompt = f"""
 You are an API. Respond ONLY with a valid JSON object and nothing else.
 
@@ -402,17 +390,16 @@ Format your response as a JSON object with these exact keys:
 Do NOT include any explanations, code blocks, or extra text. Only output the JSON object.
 """
 
-        # Generate questions using Gemini
         try:
             response = evaluation_model.generate_content(prompt)
             response_text = response.text.strip()
-            print("Gemini raw response:", response_text)  # Debug print
+            print("Gemini raw response:", response_text)  
 
-            # Remove code block markers and explanations
+            
             import re
             response_text = re.sub(r"^```json|```$", "", response_text, flags=re.MULTILINE).strip()
 
-            # Try to extract the first JSON object
+            
             match = re.search(r'({.*})', response_text, re.DOTALL)
             if match:
                 try:
@@ -424,7 +411,7 @@ Do NOT include any explanations, code blocks, or extra text. Only output the JSO
                 print("Failed to parse JSON from Gemini response:", response_text)
                 return render_template('index.html', error='Failed to parse generated questions. Please try again. (Raw response: ' + response_text[:500] + ')')
 
-            # Return the template with questions and job details
+            
             return render_template('index.html', 
                                 categorized=questions_json,
                                 job_title=job_title,
@@ -459,13 +446,13 @@ def generate_answer():
             logging.error("Missing question or category")
             return jsonify({"error": "Question and category are required"}), 400
 
-        # Use Gemini model for answer generation
+        
         try:
             logging.debug("Initializing Gemini model")
             model = genai.GenerativeModel('gemini-2.0-flash')
             logging.debug("Model initialized successfully")
             
-            # Set generation config
+            
             generation_config = {
                 "temperature": 0.7,
                 "top_p": 0.8,
@@ -480,7 +467,7 @@ def generate_answer():
             logging.error(f"Traceback: {traceback.format_exc()}")
             return jsonify({"error": f"Answer generation service unavailable: {str(e)}"}), 500
 
-        # Create appropriate prompt based on category
+        
         if category == 'technical':
             prompt = f"""Generate a concise technical answer for this interview question. Keep it focused and brief while covering the essential points.
 Question: {question}
@@ -517,7 +504,7 @@ Keep the entire response under 150 words."""
 
         try:
             logging.debug("Attempting to generate content")
-            # Generate the answer using Gemini with configurations
+            
             response = model.generate_content(
                 prompt,
                 generation_config=generation_config
@@ -545,15 +532,15 @@ Keep the entire response under 150 words."""
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if 'user' in session:
-        return redirect(url_for('index'))  # 'index' is likely '/app'
+        return redirect(url_for('index'))  
     error = None
     if request.method == 'POST':
         login_identifier = request.form.get('username')
         password = request.form.get('password')
         user = users_collection.find_one({'$or': [{'username': login_identifier}, {'email': login_identifier}]})
         if user and check_password_hash(user['password'], password):
-            session['user'] = user['username']        # Store username
-            session['user_id'] = str(user['_id'])     # Store user ID
+            session['user'] = user['username']        
+            session['user_id'] = str(user['_id'])     
             return redirect(url_for('index'))
         else:
             error = 'Invalid username, email, or password.'
@@ -580,13 +567,9 @@ def signup():
         elif users_collection.find_one({'$or': [{'username': username}, {'email': email}]}):
             error = 'Username or email already exists.'
         else:
-            # Hash the password before saving
             hashed_password = generate_password_hash(password)
             users_collection.insert_one({'username': username, 'email': email, 'password': hashed_password})
-            # Optionally, log the user in directly after signup
-            # session['user'] = username
-            # return redirect(url_for('index'))
-            return redirect(url_for('login')) # Redirect to login after successful signup
+            return redirect(url_for('login')) 
 
     return render_template('signup.html', error=error)
 
@@ -596,11 +579,11 @@ def logout():
     session.pop('user_id', None)
     return redirect(url_for('landing'))
 
-# Protect all routes except login, signup, and static files
+
 @app.before_request
 def require_login():
     if request.endpoint in ['login', 'signup', 'static', 'landing', None]:
-        return  # Skip these routes
+        return  
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
