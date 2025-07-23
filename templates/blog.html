@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InterviewPro Blog</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        /* Maintain existing styles */
+        .blog-gradient {
+            background: linear-gradient(to bottom right, #f3e8ff, #fae8ff, #fef9c3);
+            min-height: 100vh;
+        }
+        .blog-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 3px solid #d8b4fe;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.1);
+            overflow: hidden;
+        }
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(147, 51, 234, 0.2);
+        }
+        .blog-image {
+            height: 250px;
+            object-fit: cover;
+            border-bottom: 3px solid #d8b4fe;
+        }
+        .blog-tag {
+            background: #9333ea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        .read-more {
+            color: #6b21a8;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .read-more:hover {
+            color: #4f46e5;
+            transform: translateX(5px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade {
+            animation: fadeIn 0.8s ease-out;
+        }
+    </style>
+</head>
+<body class="gradient-bg">
+    <!-- Navbar (Same as Homepage) -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow nav-gradient">
+        <!-- ... Same navbar code ... -->
+    </nav>
+
+    <!-- Blog Section -->
+    <section class="py-5 blog-gradient" id="blog">
+        <div class="container">
+            <h2 class="text-center display-5 fw-bold mb-5 bounce-text">
+                Interview Success Insights
+            </h2>
+
+            <!-- Featured Post -->
+            <div class="blog-card animate-fade">
+                <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+                     class="blog-image w-100" 
+                     alt="AI Interview">
+                <div class="p-4">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="blog-tag">AI Technology</span>
+                        <span class="text-muted">March 15, 2024</span>
+                    </div>
+                    <h3 class="text-purple mb-3">Revolutionizing Interview Prep with AI</h3>
+                    <p class="text-muted">Discover how artificial intelligence is transforming the way candidates prepare for technical and behavioral interviews...</p>
+                    <a href="#" class="read-more">
+                        Read More <i class="bi bi-arrow-right-short"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Blog Grid -->
+            <div class="row g-4">
+                <!-- Post 1 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="blog-card h-100">
+                        <img src="https://images.unsplash.com/photo-1586282391129-76a5dfaa6f25?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+                             class="blog-image w-100" 
+                             alt="Resume Tips">
+                        <div class="p-4">
+                            <span class="blog-tag">Resume Building</span>
+                            <h4 class="text-purple my-3">Crafting the Perfect Tech Resume</h4>
+                            <p class="text-muted">Learn how to optimize your resume for ATS systems and human reviewers...</p>
+                            <a href="#" class="read-more">
+                                Read More <i class="bi bi-arrow-right-short"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Post 2 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="blog-card h-100">
+                        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+                             class="blog-image w-100" 
+                             alt="STAR Method">
+                        <div class="p-4">
+                            <span class="blog-tag">Interview Techniques</span>
+                            <h4 class="text-purple my-3">Mastering the STAR Framework</h4>
+                            <p class="text-muted">Practical guide to structuring answers that impress hiring managers...</p>
+                            <a href="#" class="read-more">
+                                Read More <i class="bi bi-arrow-right-short"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Post 3 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="blog-card h-100">
+                        <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+                             class="blog-image w-100" 
+                             alt="Tech Trends">
+                        <div class="p-4">
+                            <span class="blog-tag">Industry Trends</span>
+                            <h4 class="text-purple my-3">2024 Tech Interview Landscape</h4>
+                            <p class="text-muted">Stay ahead with the latest trends in technical interviews...</p>
+                            <a href="#" class="read-more">
+                                Read More <i class="bi bi-arrow-right-short"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Newsletter CTA -->
+            <div class="blog-card mt-5 text-center p-5">
+                <h3 class="text-purple mb-4">Get Career Insights Directly</h3>
+                <div class="input-group mb-3 mx-auto" style="max-width: 500px;">
+                    <input type="email" class="form-control" placeholder="Enter your email">
+                    <button class="btn btn-warning" type="button">
+                        Subscribe <i class="bi bi-envelope-arrow-up"></i>
+                    </button>
+                </div>
+                <p class="text-muted small">Never miss our latest interview strategies and success stories</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (Same as Homepage) -->
+    <footer class="text-center py-4 text-white shadow-lg footer-gradient">
+        <p class="mb-1 fs-5">Made by InterviewPro Team</p>
+        <p class="text-warning">Your success, our mission 🚀</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add scroll animation
+        window.addEventListener('scroll', function() {
+            const cards = document.querySelectorAll('.blog-card');
+            cards.forEach(card => {
+                const cardTop = card.getBoundingClientRect().top;
+                if(cardTop < window.innerHeight - 100) {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
