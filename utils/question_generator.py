@@ -2,22 +2,19 @@ import os
 import google.generativeai as genai
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
-# from langchain_google_genai import ChatGoogleGenerativeAI  # Remove this line
 import json
 import re
 
-# Import HarmBlockThreshold and HarmCategory directly from Google Generative AI package
-# This replaces the problematic import from langchain_google_genai._enums
+
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
-# Set your API key
-os.environ["GOOGLE_API_KEY"] = "AIzaSyCkX7fHSSSqGzP59egqhKpih0f_P6ICjjM"
+os.environ["GOOGLE_API_KEY"] = "YOUR_GOOGLE_API_KEY"
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
-# Initialize Gemini Flash 2.0
+
 llm = genai.GenerativeModel("gemini-2.0-flash")
 
-# Prompt template with explicit category labeling and clear instructions
+
 prompt_template = """
 Generate {count} interview questions with clear category labels based on:
 Skills: {skills}
@@ -62,25 +59,25 @@ def parse_labeled_questions(response_text):
         "behavioral": []
     }
     
-    # Updated regex: \s* allows optional spaces after the label
+    
     pattern = r"\[(TECHNICAL|SITUATIONAL|BEHAVIORAL)\]\s*(.+?)(?=\n\[|\Z)"
     matches = re.findall(pattern, response_text, re.DOTALL | re.IGNORECASE)
     
     for category, question in matches:
         category = category.lower()
-        question = question.strip()  # Remove leading/trailing whitespace
+        question = question.strip()  
         if question:
             categories[category].append(question)
             questions.append((category, question))
     
-    # Fallback parsing if regex misses anything
+
     if not questions:
         for line in response_text.split("\n"):
             line = line.strip()
             if not line:
                 continue
                 
-            # Robust label removal
+            
             if line.lower().startswith("[technical]"):
                 question = line[len("[technical]"):].strip()
                 categories["technical"].append(question)
@@ -95,11 +92,11 @@ def parse_labeled_questions(response_text):
                 questions.append(("behavioral", question))
     
     return {
-        "all_questions": questions,  # List of (category, question) tuples
-        "categorized": categories    # Dictionary of lists by category
+        "all_questions": questions,  
+        "categorized": categories    
     }
 
-# Example usage
+
 if __name__ == "__main__":
     sample_details = {
         "skills": ["Python", "Machine Learning", "MongoDB"],
